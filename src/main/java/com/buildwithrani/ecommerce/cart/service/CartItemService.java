@@ -30,27 +30,34 @@ public class CartItemService {
      * If the product already exists in cart, increment quantity.
      */
     @Transactional
-    public void addItemToCart(Long userId, Long productId, Integer quantity) {
+    public void addItemToCart(String userEmail, Long productId, Integer quantity) {
 
-        Cart cart = cartService.getOrCreateActiveCart(userId);
+        // 1. Get or create ACTIVE cart using EMAIL
+        Cart cart = cartService.getOrCreateActiveCart(userEmail);
 
+        // 2. Fetch product
         Product product = productRepository.findById(productId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Product not found"));
 
+        // 3. Find or create CartItem
         CartItem cartItem = cartItemRepository
                 .findByCartAndProductId(cart, productId)
                 .orElseGet(() -> createNewCartItem(cart, product));
 
+        // 4. Update quantity & totals
         cartItem.setQuantity(cartItem.getQuantity() + quantity);
         cartItem.setItemTotal(
-                cartItem.getProductPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()))
+                cartItem.getProductPrice()
+                        .multiply(BigDecimal.valueOf(cartItem.getQuantity()))
         );
 
         cartItemRepository.save(cartItem);
 
+        // 5. Recalculate cart total
         recalculateCartTotal(cart);
     }
+
 
     /**
      * Update quantity of an existing cart item.

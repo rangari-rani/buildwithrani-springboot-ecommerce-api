@@ -2,8 +2,8 @@ package com.buildwithrani.ecommerce.cart.service;
 
 import com.buildwithrani.ecommerce.cart.model.Cart;
 import com.buildwithrani.ecommerce.cart.model.CartStatus;
-import com.buildwithrani.ecommerce.cart.repository.CartRepository;
 import com.buildwithrani.ecommerce.cart.repository.CartItemRepository;
+import com.buildwithrani.ecommerce.cart.repository.CartRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,21 +22,23 @@ public class CartService {
     }
 
     /**
-     * Fetch the user's ACTIVE cart.
+     * Fetch the user's ACTIVE cart by EMAIL.
      * If none exists, create a new one.
      */
     @Transactional
-    public Cart getOrCreateActiveCart(Long userId) {
-        return cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
-                .orElseGet(() -> createNewCart(userId));
+    public Cart getOrCreateActiveCart(String userEmail) {
+
+        return cartRepository.findByUserEmailAndStatus(userEmail, CartStatus.ACTIVE)
+                .orElseGet(() -> createNewCart(userEmail));
     }
 
     /**
-     * Fetch the user's ACTIVE cart.
+     * Fetch the user's ACTIVE cart by EMAIL.
      * Throws exception if not found.
      */
-    public Cart getActiveCart(Long userId) {
-        return cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+    public Cart getActiveCart(String userEmail) {
+
+        return cartRepository.findByUserEmailAndStatus(userEmail, CartStatus.ACTIVE)
                 .orElseThrow(() ->
                         new IllegalStateException("Active cart not found for user"));
     }
@@ -62,11 +64,13 @@ public class CartService {
 
     // ---------- private helpers ----------
 
-    private Cart createNewCart(Long userId) {
+    private Cart createNewCart(String userEmail) {
+
         Cart cart = new Cart();
-        cart.setUserId(userId);
+        cart.setUserEmail(userEmail);
         cart.setStatus(CartStatus.ACTIVE);
         cart.setTotalPrice(BigDecimal.ZERO);
+
         return cartRepository.save(cart);
     }
 }

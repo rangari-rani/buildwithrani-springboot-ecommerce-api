@@ -36,13 +36,14 @@ public class CartController {
     @GetMapping
     public CartResponseDTO getCart(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        Long userId = userDetails.getId();
+        String userEmail = userDetails.getUsername(); // email from JWT
 
-        Cart cart = cartService.getOrCreateActiveCart(userId);
+        Cart cart = cartService.getOrCreateActiveCart(userEmail);
         List<CartItem> items = cartItemRepository.findByCart(cart);
 
         return mapToCartResponse(cart, items);
     }
+
 
 
     /**
@@ -53,14 +54,16 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody AddToCartRequestDTO request
     ) {
-        Long userId = userDetails.getId();
+
+        String userEmail = userDetails.getUsername(); // or getEmail()
 
         cartItemService.addItemToCart(
-                userId,
+                userEmail,
                 request.getProductId(),
                 request.getQuantity()
         );
     }
+
 
 
     /**

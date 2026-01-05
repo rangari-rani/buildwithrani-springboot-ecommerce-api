@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "carts")
@@ -19,9 +21,9 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // assuming auth gives you userId (no User entity yet)
+    // 🔥 FIX: email-based identity
     @Column(nullable = false, unique = true)
-    private Long userId;
+    private String userEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -30,13 +32,18 @@ public class Cart {
     @Column(nullable = false)
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
+    @OneToMany(
+            mappedBy = "cart",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<CartItem> items = new ArrayList<>();
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    // ---------- JPA lifecycle hooks ----------
 
     @PrePersist
     protected void onCreate() {

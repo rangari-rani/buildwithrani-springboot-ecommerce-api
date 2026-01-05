@@ -8,9 +8,7 @@ import java.util.Optional;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
-    // Fetch the user's ACTIVE cart (enforces one active cart per user)
-    Optional<Cart> findByUserIdAndStatus(Long userId, CartStatus status);
+    Optional<Cart> findByUserEmailAndStatus(String userEmail, CartStatus status);
+    boolean existsByUserEmailAndStatus(String userEmail, CartStatus status);
 
-    // Check if the user already has an ACTIVE cart
-    boolean existsByUserIdAndStatus(Long userId, CartStatus status);
 }
