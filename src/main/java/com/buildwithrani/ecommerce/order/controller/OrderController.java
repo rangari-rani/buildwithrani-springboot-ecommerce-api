@@ -1,6 +1,7 @@
 package com.buildwithrani.ecommerce.order.controller;
 
-import com.buildwithrani.ecommerce.order.model.Order;
+import com.buildwithrani.ecommerce.order.dto.CreateOrderResponseDTO;
+import com.buildwithrani.ecommerce.order.dto.OrderResponseDTO;
 import com.buildwithrani.ecommerce.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,24 +22,30 @@ public class OrderController {
      * Create Order (Cart → Order)
      */
     @PostMapping
-    public ResponseEntity<Order> createOrder(Authentication authentication) {
+    public ResponseEntity<CreateOrderResponseDTO> createOrder(
+            Authentication authentication
+    ) {
 
         String userEmail = authentication.getName();
 
-        Order order = orderService.createOrder(userEmail);
+        CreateOrderResponseDTO response =
+                orderService.createOrder(userEmail);
 
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     /**
      * Get Order History (My Orders)
      */
     @GetMapping
-    public ResponseEntity<List<Order>> getMyOrders(Authentication authentication) {
+    public ResponseEntity<List<OrderResponseDTO>> getMyOrders(
+            Authentication authentication
+    ) {
 
         String userEmail = authentication.getName();
 
-        List<Order> orders = orderService.getOrdersByUser(userEmail);
+        List<OrderResponseDTO> orders =
+                orderService.getOrdersByUser(userEmail);
 
         return ResponseEntity.ok(orders);
     }
@@ -47,14 +54,15 @@ public class OrderController {
      * Get Single Order
      */
     @GetMapping("/{orderId}")
-    public ResponseEntity<Order> getOrderById(
+    public ResponseEntity<OrderResponseDTO> getOrderById(
             @PathVariable Long orderId,
             Authentication authentication
     ) {
 
         String userEmail = authentication.getName();
 
-        Order order = orderService.getOrderById(orderId, userEmail);
+        OrderResponseDTO order =
+                orderService.getOrderById(orderId, userEmail);
 
         return ResponseEntity.ok(order);
     }
