@@ -19,9 +19,8 @@ A Spring Boot backend and MySQL database that implements a **secure authenticati
 ## ✨ Features
 
 - User signup and login APIs
-- Secure password hashing using **BCrypt**
-- JWT token generation on authentication
-- Persistent user storage with MySQL
+- Product module CRUD APIs
+- Cart CRUD APIs
 
 ---
 
