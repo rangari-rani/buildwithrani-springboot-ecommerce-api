@@ -21,6 +21,7 @@ A Spring Boot backend and MySQL database that implements a **secure authenticati
 - User signup and login APIs
 - Product module CRUD APIs
 - Cart CRUD APIs
+- Order APIs
 
 ---
 
